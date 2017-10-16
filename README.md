@@ -8,7 +8,7 @@ This is still a work in progress!
 
 ## Usage
 
-Currently only GET type requests are supported. 
+Currently only GET type requests and User creation are supported. See _tests/test.php_ for more examples.
 
 ```php
 <?php
@@ -27,10 +27,12 @@ $config = [
 $client = new ROSClient($config);
 $client->authenticate();
 
-$realms = $client->realms();
+$realms = $client->getRealms();
 ```
 
 ## Notes
+
+This implementation only allows password authentication at this time.
 
 The current version was tested against Realm Object Server Professional Edition v1.8.3.
 
