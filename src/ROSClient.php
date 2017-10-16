@@ -3,6 +3,7 @@
 namespace SlatmanROSWebAPI;
 
 use Httpful\Request;
+use Httpful\Response;
 
 
 class ROSClient
@@ -40,12 +41,6 @@ class ROSClient
             ],
             $config
         );
-
-        $url = $this->createRequestURL(self::ENDPOINT_REALMS);
-
-	    $response = Request::get($url)->send();
-
-	    var_dump($response);
     }
 
     private function createRequestURL($path) {
@@ -58,22 +53,39 @@ class ROSClient
 
     public function users() {
         $url = $this->createRequestURL(self::ENDPOINT_USERS);
+
+        /** @var Response $response */
+        $response = Request::get($url)->send();
     }
 
     public function info() {
         $url = $this->createRequestURL(self::ENDPOINT_INFO);
+
+        /** @var Response $response */
+        $response = Request::get($url)->send();
     }
 
     public function realms() {
         $url = $this->createRequestURL(self::ENDPOINT_REALMS);
+
+        /** @var Response $response */
+        $response = Request::get($url)->send();
+
+        var_dump($response);
     }
 
     public function stats() {
         $url = $this->createRequestURL(self::ENDPOINT_STATS);
+
+        /** @var Response $response */
+        $response = Request::get($url)->send();
     }
 
     public function functions() {
         $url = $this->createRequestURL(self::ENDPOINT_FUNCTIONS);
+
+        /** @var Response $response */
+        $response = Request::get($url)->send();
     }
 
     // TODO: add logs and log lines

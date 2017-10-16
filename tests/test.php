@@ -10,3 +10,5 @@ $config = [
 ];
 
 $c = new ROSClient($config);
+
+$c->realms();
