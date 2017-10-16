@@ -2,6 +2,8 @@
 
 namespace SlatmanROSWebAPI;
 
+use Httpful\Request;
+
 
 class ROSClient
 {
@@ -9,6 +11,8 @@ class ROSClient
     const USER_AGENT_SUFFIX = "ros-web-api-php-client/";
     
     public function __construct(array $config = []) {
-	
+	    $response = Request::get('google.com')->send();
+
+	    var_dump($response);
     }
 }
