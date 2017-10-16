@@ -2,6 +2,7 @@
 
 namespace SlatmanROSWebAPI;
 
+use Httpful\Mime;
 use Httpful\Request;
 use Httpful\Response;
 
@@ -10,6 +11,8 @@ class ROSClient
 {
     const VERSION               = "0.0.1";
     const USER_AGENT_SUFFIX     = "ros-web-api-php-client/";
+
+    const ENDPOINT_AUTH         = "auth";
 
     const ENDPOINT_BASE         = "api/";
 
@@ -51,6 +54,58 @@ class ROSClient
         return $url;
     }
 
+    private function createAuthURL() {
+        $host = $this->config['host'];
+        $port = $this->config['port'];
+        $url = $host.':'.$port.'/'.self::ENDPOINT_AUTH;
+
+        return $url;
+    }
+
+    public function authenticate() {
+        $url = $this->createAuthURL();
+
+        $payload = [
+            'data'          => $this->config['username'],
+            'user_info'     => [
+                'password'  => $this->config['password'],
+            ],
+            'provider'      => 'password',
+            'app_id'        => 'io.realm.Dashboard'
+        ];
+
+        /** @var Response $response */
+        $response = Request::post($url, $payload)->sendsType(Mime::JSON)->send();
+
+        if ($response->code === 200) {
+            // Response was succesful! Let's parse it!
+            $body = $response->body;
+            $result = json_decode($body);
+
+            $refresh_token = $result->refresh_token;
+            $token = $refresh_token->token;
+            $token_data = $refresh_token->token_data;
+            $access = $token_data->access;
+            $app_id = $token_data->app_id;
+            $expires = $token_data->expires;
+            $identity = $token_data->identity;
+            $is_admin = $token_data->is_admin;
+
+
+            var_dump($refresh_token);
+            var_dump($token);
+            var_dump($token_data);
+            var_dump($access);
+            var_dump($app_id, $expires, $identity, $is_admin);
+            var_dump($result);
+
+        } else {
+            // Some error occurred! Dump the response for now...
+            var_dump($response);
+        }
+
+    }
+
     public function users() {
         $url = $this->createRequestURL(self::ENDPOINT_USERS);
 
@@ -70,8 +125,6 @@ class ROSClient
 
         /** @var Response $response */
         $response = Request::get($url)->send();
-
-        var_dump($response);
     }
 
     public function stats() {
@@ -89,4 +142,6 @@ class ROSClient
     }
 
     // TODO: add logs and log lines
+
+
 }
