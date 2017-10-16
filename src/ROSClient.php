@@ -172,6 +172,10 @@ class ROSClient
         Request::ini($authenticatedTemplate);
     }
 
+    private function hasValidResponseCode(Response $response) {
+        return $response->code >= 200 && $response->code < 300;
+    }
+
     public function users() {
         $url = $this->createRequestURL(self::ENDPOINT_USERS);
 
@@ -179,6 +183,16 @@ class ROSClient
 
         /** @var Response $response */
         $response = Request::get($url)->send();
+
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+
+            return $result;
+        } else {
+            var_dump($response);
+        }
+
+        return false;
     }
 
     public function info() {
@@ -188,6 +202,16 @@ class ROSClient
 
         /** @var Response $response */
         $response = Request::get($url)->send();
+
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+
+            return $result;
+        } else {
+            var_dump($response);
+        }
+
+        return false;
     }
 
     public function realms() {
@@ -198,7 +222,15 @@ class ROSClient
         /** @var Response $response */
         $response = Request::get($url)->send();
 
-        var_dump($response);
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+
+            return $result;
+        } else {
+            var_dump($response);
+        }
+
+        return false;
     }
 
     public function stats() {
@@ -208,6 +240,16 @@ class ROSClient
 
         /** @var Response $response */
         $response = Request::get($url)->send();
+
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+
+            return $result;
+        } else {
+            var_dump($response);
+        }
+
+        return false;
     }
 
     public function functions() {
@@ -217,9 +259,18 @@ class ROSClient
 
         /** @var Response $response */
         $response = Request::get($url)->send();
+
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+
+            return $result;
+        } else {
+            var_dump($response);
+        }
+
+        return false;
     }
 
-    // TODO: add logs and log lines
-
+    // TODO: add logs and log lines; these are implemented partly through websockets
 
 }

@@ -15,4 +15,8 @@ $c = new ROSClient($config);
 
 $c->authenticate();
 
-$c->realms();
+var_dump($c->stats());
+var_dump($c->users());
+var_dump($c->realms());
+var_dump($c->functions());
+var_dump($c->info());
