@@ -15,4 +15,4 @@ $c = new ROSClient($config);
 
 $c->authenticate();
 
-//$c->realms();
+$c->realms();
