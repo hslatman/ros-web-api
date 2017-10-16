@@ -41,13 +41,40 @@ class ROSClient
             $config
         );
 
-        $host = $this->config['host'];
-        $port = $this->config['port'];
-
-        $url = $host.':'.$port.'/'.self::ENDPOINT_BASE.self::ENDPOINT_REALMS;
+        $url = $this->createRequestURL(self::ENDPOINT_REALMS);
 
 	    $response = Request::get($url)->send();
 
 	    var_dump($response);
     }
+
+    private function createRequestURL($path) {
+        $host = $this->config['host'];
+        $port = $this->config['port'];
+        $url = $host.':'.$port.'/'.self::ENDPOINT_BASE.$path;
+
+        return $url;
+    }
+
+    public function users() {
+        $url = $this->createRequestURL(self::ENDPOINT_USERS);
+    }
+
+    public function info() {
+        $url = $this->createRequestURL(self::ENDPOINT_INFO);
+    }
+
+    public function realms() {
+        $url = $this->createRequestURL(self::ENDPOINT_REALMS);
+    }
+
+    public function stats() {
+        $url = $this->createRequestURL(self::ENDPOINT_STATS);
+    }
+
+    public function functions() {
+        $url = $this->createRequestURL(self::ENDPOINT_FUNCTIONS);
+    }
+
+    // TODO: add logs and log lines
 }
