@@ -160,7 +160,7 @@ class ROSClient
 
     }
 
-    private function prepareAuthenticatedRequest() {
+    private function prepareAuthenticatedGetRequest() {
 
         $authenticatedTemplate = Request::init()
             ->method(Http::GET)
@@ -172,14 +172,27 @@ class ROSClient
         Request::ini($authenticatedTemplate);
     }
 
+    private function prepareAuthenticatedPostRequest() {
+
+        $authenticatedTemplate = Request::init()
+            ->method(Http::POST)
+            ->expects(Mime::JSON)
+            ->sendsType(Mime::JSON)
+            ->addHeader('Authorization', $this->token)
+        ;
+
+        // Set it as a template
+        Request::ini($authenticatedTemplate);
+    }
+
     private function hasValidResponseCode(Response $response) {
         return $response->code >= 200 && $response->code < 300;
     }
 
-    public function users() {
+    public function getUsers() {
         $url = $this->createRequestURL(self::ENDPOINT_USERS);
 
-        $this->prepareAuthenticatedRequest();
+        $this->prepareAuthenticatedGetRequest();
 
         /** @var Response $response */
         $response = Request::get($url)->send();
@@ -195,10 +208,51 @@ class ROSClient
         return false;
     }
 
-    public function info() {
+    public function createUser($providerIdentity, $password, $isAdmin = false) {
+        $url = $this->createRequestURL(self::ENDPOINT_USERS);
+
+        $this->prepareAuthenticatedPostRequest();
+
+        $payload = [
+            'isAdmin'           => $isAdmin,
+            'accounts'          => [[
+                'provider'      => 'password',
+                'provider_id'   => $providerIdentity,
+                'data'          => [
+                    'password'  => $password
+                ]
+            ]]
+        ];
+
+        /** @var Response $response */
+        $response = Request::post($url, $payload)->send();
+
+        if ($this->hasValidResponseCode($response)) {
+            $result = $response->body;
+            // example response: {"accounts":[{"provider":"password","provider_id":"value of $providerIdentity"}],"id":"32 character identifier","isAdmin":false}
+            // $accounts can be used to login to an identity; an identity could have more than one provider
+            //$accounts = $result->accounts;
+            $id = $result->id;
+
+            return $id;
+        } else {
+
+            // example error:  ["raw_body"]=>
+            //string(161) "{"status":400,"type":"https://realm.io/docs/object-server/problems/existing-account","title":"The account cannot be registered as it exists already.","code":613}"
+            var_dump($response);
+        }
+
+        return null;
+    }
+
+    public function createAdminUser($providerIdentity, $password) {
+        return $this->createUser($providerIdentity, $password, $isAdmin = true);
+    }
+
+    public function getInfo() {
         $url = $this->createRequestURL(self::ENDPOINT_INFO);
 
-        $this->prepareAuthenticatedRequest();
+        $this->prepareAuthenticatedGetRequest();
 
         /** @var Response $response */
         $response = Request::get($url)->send();
@@ -214,10 +268,10 @@ class ROSClient
         return false;
     }
 
-    public function realms() {
+    public function getRealms() {
         $url = $this->createRequestURL(self::ENDPOINT_REALMS);
 
-        $this->prepareAuthenticatedRequest();
+        $this->prepareAuthenticatedGetRequest();
 
         /** @var Response $response */
         $response = Request::get($url)->send();
@@ -233,10 +287,10 @@ class ROSClient
         return false;
     }
 
-    public function stats() {
+    public function getStats() {
         $url = $this->createRequestURL(self::ENDPOINT_STATS);
 
-        $this->prepareAuthenticatedRequest();
+        $this->prepareAuthenticatedGetRequest();
 
         /** @var Response $response */
         $response = Request::get($url)->send();
@@ -252,10 +306,10 @@ class ROSClient
         return false;
     }
 
-    public function functions() {
+    public function getFunctions() {
         $url = $this->createRequestURL(self::ENDPOINT_FUNCTIONS);
 
-        $this->prepareAuthenticatedRequest();
+        $this->prepareAuthenticatedGetRequest();
 
         /** @var Response $response */
         $response = Request::get($url)->send();

@@ -15,8 +15,11 @@ $c = new ROSClient($config);
 
 $c->authenticate();
 
-var_dump($c->stats());
-var_dump($c->users());
-var_dump($c->realms());
-var_dump($c->functions());
-var_dump($c->info());
+var_dump($c->getStats());
+var_dump($c->getUsers());
+var_dump($c->getRealms());
+var_dump($c->getFunctions());
+var_dump($c->getInfo());
+
+
+var_dump($c->createUser('test-api-identity-2', '1234'));
